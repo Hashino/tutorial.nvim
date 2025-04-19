@@ -85,6 +85,14 @@ function Tutor.setup(opts)
           lines = content["insert"]
         elseif mode == "VISUAL" or mode == "VISUAL LINE" or mode == "VISUAL BLOCK" then
           lines = content["visual"]
+        else
+          vim.api.nvim_win_close(Tutor.win, false)
+          Tutor.win = nil
+          return
+        end
+
+        if Tutor.win == nil then
+          Tutor.open()
         end
 
         vim.api.nvim_buf_set_lines(Tutor.buf, 0, -1, false, lines)
