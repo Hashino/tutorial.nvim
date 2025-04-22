@@ -9,7 +9,7 @@ Config.default_opts = {
     width = 50,
     height = 16,
     col = vim.o.columns - 50,
-    row = vim.o.lines - 3 - 16,
+    row = vim.o.lines - 4 - 16,
 
     style = "minimal",
     border = "rounded",
