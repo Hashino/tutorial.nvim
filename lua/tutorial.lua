@@ -1,6 +1,6 @@
 local config = require("tutorial.config")
 
-local Tutor = {
+local Tutorial = {
   buf = nil,
   win = nil,
   enabled = true,
@@ -43,30 +43,30 @@ local content = {
   }
 }
 
-function Tutor.open()
-  if Tutor.enabled then
-    Tutor.buf = vim.api.nvim_create_buf(false, true)
-    Tutor.win = vim.api.nvim_open_win(Tutor.buf, false, config.options.edit_win_config)
+function Tutorial.open()
+  if Tutorial.enabled then
+    Tutorial.buf = vim.api.nvim_create_buf(false, true)
+    Tutorial.win = vim.api.nvim_open_win(Tutorial.buf, false, config.options.edit_win_config)
 
-    vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = Tutor.buf, })
-    vim.api.nvim_set_option_value("swapfile", false, { buf = Tutor.buf, })
-    vim.api.nvim_set_option_value("filetype", "markdown", { buf = Tutor.buf, })
+    vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = Tutorial.buf, })
+    vim.api.nvim_set_option_value("swapfile", false, { buf = Tutorial.buf, })
+    vim.api.nvim_set_option_value("filetype", "markdown", { buf = Tutorial.buf, })
 
-    vim.api.nvim_buf_set_lines(Tutor.buf, 0, -1, false, content["normal"])
+    vim.api.nvim_buf_set_lines(Tutorial.buf, 0, -1, false, content["normal"])
   end
 end
 
-function Tutor.setup(opts)
+function Tutorial.setup(opts)
   config.options = vim.tbl_deep_extend("force", config.default_opts, opts or {})
-  Tutor.enabled = config.options.enabled
+  Tutorial.enabled = config.options.enabled
 
   vim.api.nvim_create_autocmd({ "BufEnter", }, {
-    callback = Tutor.open,
+    callback = Tutorial.open,
   })
 
   vim.api.nvim_create_autocmd({ "ModeChanged", }, {
     callback = function()
-      if Tutor.enabled then
+      if Tutorial.enabled then
         local mode_names = {
           n = "NORMAL",
           i = "INSERT",
@@ -86,29 +86,29 @@ function Tutor.setup(opts)
         elseif mode == "VISUAL" or mode == "VISUAL LINE" or mode == "VISUAL BLOCK" then
           lines = content["visual"]
         else
-          vim.api.nvim_win_close(Tutor.win, false)
-          Tutor.win = nil
+          vim.api.nvim_win_close(Tutorial.win, false)
+          Tutorial.win = nil
           return
         end
 
-        if Tutor.win == nil then
-          Tutor.open()
+        if Tutorial.win == nil then
+          Tutorial.open()
         end
 
-        vim.api.nvim_buf_set_lines(Tutor.buf, 0, -1, false, lines)
+        vim.api.nvim_buf_set_lines(Tutorial.buf, 0, -1, false, lines)
       end
     end,
   })
 end
 
-function Tutor.toggle()
-  if Tutor.enabled then
-    Tutor.enabled = false
-    vim.api.nvim_win_close(Tutor.win, true)
+function Tutorial.toggle()
+  if Tutorial.enabled then
+    Tutorial.enabled = false
+    vim.api.nvim_win_close(Tutorial.win, true)
   else
-    Tutor.enabled = true
-    Tutor.open()
+    Tutorial.enabled = true
+    Tutorial.open()
   end
 end
 
-return Tutor
+return Tutorial
