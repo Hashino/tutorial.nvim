@@ -1,15 +1,18 @@
 local Config = {}
 
+local WIDTH = 40
+local HEIGHT = 16
+
 Config.default_opts = {
   enabled = true,
 
   edit_win_config = {
     relative = "editor",
 
-    width = 50,
-    height = 16,
-    col = vim.o.columns - 50,
-    row = vim.o.lines - 4 - 16,
+    width = WIDTH,
+    height = HEIGHT,
+    col = vim.o.columns - WIDTH,
+    row = vim.o.lines - 3 - vim.o.cmdheight - 16,
 
     style = "minimal",
     border = "rounded",
