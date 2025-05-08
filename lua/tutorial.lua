@@ -118,12 +118,12 @@ function Tutorial.setup(opts)
 end
 
 function Tutorial.toggle()
+  Tutorial.enabled = not Tutorial.enabled
+
   if Tutorial.enabled then
-    Tutorial.enabled = false
-    vim.api.nvim_win_close(Tutorial.win, true)
-  else
-    Tutorial.enabled = true
     Tutorial.open()
+  else
+    Tutorial.close()
   end
 end
 
