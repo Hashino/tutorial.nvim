@@ -12,3 +12,6 @@ with lazy.nvim
   opts = {},
 }
 ```
+## Config
+
+[see the source code for default options](https://github.com/Hashino/tutorial.nvim/blob/main/lua/tutorial/config.lua)

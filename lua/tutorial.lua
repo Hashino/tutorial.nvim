@@ -1,4 +1,5 @@
 local config = require("tutorial.config")
+local utils = require("tutorial.utils")
 
 local Tutorial = {
   buf = nil,
@@ -18,9 +19,9 @@ local content = {
     "`h/j/k/l` move cursor",
     "",
     "`a` insert mode after cursor",
-    "`A` insert mode at line start",
+    "`A` insert mode at line end",
     "`i` insert mode before cursor",
-    "`I` insert mode at line end",
+    "`I` insert mode at line start",
     "`v` visual mode",
     "`V` visual line mode",
     "`<C-v>` visual block mode",
@@ -44,18 +45,34 @@ local content = {
 }
 
 function Tutorial.open()
-  if Tutorial.enabled then
+  if Tutorial.enabled and utils.should_display() then
     Tutorial.buf = vim.api.nvim_create_buf(false, true)
-    Tutorial.win = vim.api.nvim_open_win(Tutorial.buf, false, config.options.edit_win_config)
+    Tutorial.win = vim.api.nvim_open_win(Tutorial.buf, false, config.options.float_win_config)
 
     vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = Tutorial.buf, })
     vim.api.nvim_set_option_value("swapfile", false, { buf = Tutorial.buf, })
     vim.api.nvim_set_option_value("filetype", "markdown", { buf = Tutorial.buf, })
 
     vim.api.nvim_buf_set_lines(Tutorial.buf, 0, -1, false, content["normal"])
+  else
+    Tutorial.close()
   end
 end
 
+function Tutorial.close()
+  if Tutorial.win ~= nil then
+    pcall(vim.api.nvim_win_close, Tutorial.win, true)
+    Tutorial.win = nil
+  end
+
+  if Tutorial.buf ~= nil then
+    pcall(vim.api.nvim_buf_delete, Tutorial.buf, { force = true })
+    Tutorial.buf = nil
+  end
+end
+
+---@brief setup the Tutorial plugin
+---@param opts TutorialOptions
 function Tutorial.setup(opts)
   config.options = vim.tbl_deep_extend("force", config.default_opts, opts or {})
   Tutorial.enabled = config.options.enabled
@@ -66,7 +83,7 @@ function Tutorial.setup(opts)
 
   vim.api.nvim_create_autocmd({ "ModeChanged", }, {
     callback = function()
-      if Tutorial.enabled then
+      if Tutorial.enabled and utils.should_display() then
         local mode_names = {
           n = "NORMAL",
           i = "INSERT",
@@ -86,8 +103,7 @@ function Tutorial.setup(opts)
         elseif mode == "VISUAL" or mode == "VISUAL LINE" or mode == "VISUAL BLOCK" then
           lines = content["visual"]
         else
-          vim.api.nvim_win_close(Tutorial.win, false)
-          Tutorial.win = nil
+          Tutorial.close()
           return
         end
 
@@ -110,5 +126,6 @@ function Tutorial.toggle()
     Tutorial.open()
   end
 end
+
 
 return Tutorial
