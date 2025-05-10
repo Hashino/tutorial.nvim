@@ -8,34 +8,34 @@ local HEIGHT = 16
 ---@field ignored_buffers string[]|fun():string[] ignored buffers
 ---@field float_win_config table configuration for the edit window
 Config.default_opts = {
-  enabled = true,
+	enabled = true,
 
-  -- doesn"t display on buffers that match filetype/filename/filepath to
-  -- entries. can be either a string array or a function that returns a
-  -- string array. filepath can be relative to cwd or absolute
-  ignored_buffers = {
-    "nofile",
-    "quickfix",
-    "help",
-    "prompt",
-    "popup",
-  },
+	-- doesn"t display on buffers that match filetype/filename/filepath to
+	-- entries. can be either a string array or a function that returns a
+	-- string array. filepath can be relative to cwd or absolute
+	ignored_buffers = {
+		"nofile",
+		"quickfix",
+		"help",
+		"prompt",
+		"popup",
+	},
 
-  -- window configs of the floating Tutorial buffer
-  -- see :h nvim_open_win() for available options
-  float_win_config = {
-    relative = "editor",
+	-- window configs of the floating Tutorial buffer
+	-- see :h nvim_open_win() for available options
+	float_win_config = {
+		relative = "editor",
 
-    width = WIDTH,
-    height = HEIGHT,
-    col = vim.o.columns - WIDTH,
-    row = vim.o.lines - 3 - vim.o.cmdheight - 16,
+		width = WIDTH,
+		height = HEIGHT,
+		col = vim.o.columns - WIDTH,
+		row = vim.o.lines - 3 - vim.o.cmdheight - 16,
 
-    style = "minimal",
-    border = "rounded",
+		style = "minimal",
+		border = "rounded",
 
-    noautocmd = true,
-  },
+		noautocmd = true,
+	},
 }
 
 Config.options = Config.default_opts
