@@ -30,7 +30,7 @@ local content = {
     "`<Esc>` exit insert mode",
     "`<C-o>` execute one normal mode command",
     "",
-    "type to insert text"
+    "type to insert text",
   },
   ["visual"] = {
     "`<Esc>` to exit visual mode",
@@ -41,7 +41,7 @@ local content = {
     "`d` delete the selected text",
     "`c` change the selected text",
     "`p` paste the yanked text",
-  }
+  },
 }
 
 function Tutorial.open()
@@ -49,9 +49,9 @@ function Tutorial.open()
     Tutorial.buf = vim.api.nvim_create_buf(false, true)
     Tutorial.win = vim.api.nvim_open_win(Tutorial.buf, false, config.options.float_win_config)
 
-    vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = Tutorial.buf, })
-    vim.api.nvim_set_option_value("swapfile", false, { buf = Tutorial.buf, })
-    vim.api.nvim_set_option_value("filetype", "markdown", { buf = Tutorial.buf, })
+    vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = Tutorial.buf })
+    vim.api.nvim_set_option_value("swapfile", false, { buf = Tutorial.buf })
+    vim.api.nvim_set_option_value("filetype", "markdown", { buf = Tutorial.buf })
 
     vim.api.nvim_buf_set_lines(Tutorial.buf, 0, -1, false, content["normal"])
   else
@@ -77,11 +77,15 @@ function Tutorial.setup(opts)
   config.options = vim.tbl_deep_extend("force", config.default_opts, opts or {})
   Tutorial.enabled = config.options.enabled
 
-  vim.api.nvim_create_autocmd({ "BufEnter", }, {
-    callback = Tutorial.open,
+  vim.api.nvim_create_autocmd({ "BufEnter" }, {
+    callback = function()
+      vim.defer_fn(function()
+        Tutorial.open()
+      end, 0)
+    end,
   })
 
-  vim.api.nvim_create_autocmd({ "ModeChanged", }, {
+  vim.api.nvim_create_autocmd({ "ModeChanged" }, {
     callback = function()
       if Tutorial.enabled and utils.should_display() then
         local mode_names = {
@@ -89,7 +93,7 @@ function Tutorial.setup(opts)
           i = "INSERT",
           v = "VISUAL",
           V = "VISUAL LINE",
-          ['\22'] = "VISUAL BLOCK", -- Ctrl+V (blockwise visual)
+          ["\22"] = "VISUAL BLOCK", -- Ctrl+V (blockwise visual)
         }
 
         local mode = mode_names[vim.fn.mode()]
@@ -126,6 +130,5 @@ function Tutorial.toggle()
     Tutorial.close()
   end
 end
-
 
 return Tutorial
